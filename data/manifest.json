@@ -9,8 +9,288 @@
     "volume",
     "note"
   ],
-  "count": 24,
+  "count": 73,
   "datasets": [
+    {
+      "symbol": "sh.600000",
+      "name": "浦发银行",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600000.csv",
+      "rows": 3962,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600004",
+      "name": "白云机场",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600004.csv",
+      "rows": 4006,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600006",
+      "name": "东风股份",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600006.csv",
+      "rows": 3948,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600007",
+      "name": "中国国贸",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600007.csv",
+      "rows": 4005,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600008",
+      "name": "首创环保",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600008.csv",
+      "rows": 3978,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600009",
+      "name": "上海机场",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600009.csv",
+      "rows": 3995,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600010",
+      "name": "包钢股份",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600010.csv",
+      "rows": 3935,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600011",
+      "name": "华能国际",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600011.csv",
+      "rows": 3995,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600012",
+      "name": "皖通高速",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600012.csv",
+      "rows": 3994,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600015",
+      "name": "华夏银行",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600015.csv",
+      "rows": 3990,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600016",
+      "name": "民生银行",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600016.csv",
+      "rows": 4000,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600017",
+      "name": "日照港",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600017.csv",
+      "rows": 3988,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600018",
+      "name": "上港集团",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600018.csv",
+      "rows": 3949,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600019",
+      "name": "宝钢股份",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600019.csv",
+      "rows": 3909,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600020",
+      "name": "中原高速",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600020.csv",
+      "rows": 3993,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600021",
+      "name": "上海电力",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600021.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600022",
+      "name": "山东钢铁",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600022.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600023",
+      "name": "浙能电力",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600023.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600025",
+      "name": "华能水电",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600025.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600026",
+      "name": "中远海能",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600026.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600027",
+      "name": "华电国际",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600027.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600028",
+      "name": "中国石化",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600028.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600029",
+      "name": "南方航空",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600029.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600030",
+      "name": "中信证券",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600030.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600031",
+      "name": "三一重工",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600031.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600032",
+      "name": "浙江新能",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600032.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600033",
+      "name": "福建高速",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600033.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600035",
+      "name": "楚天高速",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600035.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
     {
       "symbol": "sh.600036",
       "name": "China Merchants Bank",
@@ -19,6 +299,216 @@
       "file": "downloaded/a_share/sh_600036.csv",
       "rows": 3988,
       "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600037",
+      "name": "歌华有线",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600037.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600038",
+      "name": "中直股份",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600038.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600039",
+      "name": "四川路桥",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600039.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600048",
+      "name": "保利发展",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600048.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600050",
+      "name": "中国联通",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600050.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600051",
+      "name": "宁波联合",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600051.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600052",
+      "name": "东望时代",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600052.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600053",
+      "name": "*ST九鼎",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600053.csv",
+      "rows": 122,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600054",
+      "name": "黄山旅游",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600054.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600055",
+      "name": "万东医疗",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600055.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600056",
+      "name": "中国医药",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600056.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600057",
+      "name": "厦门象屿",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600057.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600058",
+      "name": "五矿发展",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600058.csv",
+      "rows": 115,
+      "start": "2026-01-15",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600059",
+      "name": "古越龙山",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600059.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600060",
+      "name": "海信视像",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600060.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600061",
+      "name": "国投资本",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600061.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600062",
+      "name": "华润双鹤",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600062.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600063",
+      "name": "皖维高新",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600063.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600064",
+      "name": "南京高科",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600064.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600066",
+      "name": "宇通客车",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600066.csv",
+      "rows": 123,
+      "start": "2026-01-05",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600067",
+      "name": "冠城新材",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600067.csv",
+      "rows": 123,
+      "start": "2026-01-05",
       "end": "2026-07-09"
     },
     {

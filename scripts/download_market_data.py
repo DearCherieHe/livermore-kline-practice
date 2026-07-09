@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
 
@@ -21,6 +23,7 @@ A_SHARE_CODES = [
     ("sh.600036", "China Merchants Bank"),
     ("sh.601318", "Ping An Insurance"),
 ]
+A_SHARE_STOCK_PREFIXES = ("sh.60", "sh.68", "sz.00", "sz.30", "bj.")
 
 
 def csv_name(symbol: str) -> str:
@@ -68,13 +71,15 @@ def update_manifest(items: list[dict]) -> None:
     (DATA / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def download_yfinance() -> list[dict]:
+def download_yfinance(start_date: str, markets: set[str]) -> list[dict]:
     import yfinance as yf
 
     manifest = []
     for market, tickers in [("US", US_TICKERS), ("HK", HK_TICKERS)]:
+        if market.lower() not in markets:
+            continue
         for ticker in tickers:
-            data = yf.download(ticker, start="2010-01-01", auto_adjust=False, progress=False)
+            data = yf.download(ticker, start=start_date, auto_adjust=False, progress=False)
             if data.empty:
                 print(f"skip empty {ticker}")
                 continue
@@ -114,8 +119,55 @@ def download_yfinance() -> list[dict]:
     return manifest
 
 
-def download_baostock() -> list[dict]:
+def latest_trade_date(bs) -> str:
+    today = date.today()
+    start = today - timedelta(days=14)
+    rs = bs.query_trade_dates(start_date=start.isoformat(), end_date=today.isoformat())
+    if rs.error_code != "0":
+        raise RuntimeError(f"baostock query_trade_dates failed: {rs.error_msg}")
+
+    dates = []
+    while rs.next():
+        row = dict(zip(rs.fields, rs.get_row_data()))
+        if row.get("is_trading_day") == "1":
+            dates.append(row["calendar_date"])
+    if not dates:
+        raise RuntimeError("baostock returned no recent trading days")
+    return dates[-1]
+
+
+def get_a_share_codes(bs, full_universe: bool, universe_date: str | None) -> list[tuple[str, str]]:
+    if not full_universe:
+        return A_SHARE_CODES
+
+    universe_date = universe_date or latest_trade_date(bs)
+    print(f"Using A-share universe date: {universe_date}")
+    codes = []
+    rs = bs.query_all_stock(day=universe_date)
+    if rs.error_code != "0":
+        raise RuntimeError(f"baostock query_all_stock failed: {rs.error_msg}")
+
+    while rs.next():
+        row = dict(zip(rs.fields, rs.get_row_data()))
+        code = row.get("code", "")
+        if row.get("tradeStatus") == "1" and code.startswith(A_SHARE_STOCK_PREFIXES):
+            codes.append((code, row.get("code_name", code)))
+
+    codes.sort(key=lambda item: item[0])
+    return codes
+
+
+def download_baostock(
+    start_date: str,
+    full_universe: bool,
+    markets: set[str],
+    limit: int | None,
+    universe_date: str | None,
+) -> list[dict]:
     import baostock as bs
+
+    if "a-share" not in markets:
+        return []
 
     fields = "date,code,open,high,low,close,volume,amount,adjustflag,turn,tradestatus,pctChg,isST"
     manifest = []
@@ -124,17 +176,27 @@ def download_baostock() -> list[dict]:
         raise RuntimeError(f"baostock login failed: {login.error_msg}")
 
     try:
-        for code, name in A_SHARE_CODES:
+        codes = get_a_share_codes(bs, full_universe, universe_date)
+        if limit is not None:
+            codes = codes[:limit]
+        for index, (code, name) in enumerate(codes, start=1):
+            print(f"[A-share {index}/{len(codes)}] {code} {name}")
             rs = bs.query_history_k_data_plus(
                 code,
                 fields,
-                start_date="2010-01-01",
+                start_date=start_date,
                 frequency="d",
                 adjustflag="3",
             )
+            if rs.error_code != "0":
+                print(f"skip {code}: {rs.error_msg}")
+                continue
             raw_rows = []
             while rs.next():
                 raw_rows.append(dict(zip(rs.fields, rs.get_row_data())))
+            if not raw_rows:
+                print(f"skip empty {code}")
+                continue
 
             raw_path = RAW / "a_share" / f"{csv_name(code)}.csv"
             raw_path.parent.mkdir(parents=True, exist_ok=True)
@@ -174,12 +236,42 @@ def download_baostock() -> list[dict]:
     return manifest
 
 
+def parse_markets(value: str) -> set[str]:
+    markets = {item.strip().lower() for item in value.split(",") if item.strip()}
+    valid = {"us", "hk", "a-share"}
+    unknown = markets - valid
+    if unknown:
+        raise argparse.ArgumentTypeError(f"unknown market(s): {', '.join(sorted(unknown))}")
+    return markets
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Download and normalize OHLCV datasets.")
+    parser.add_argument(
+        "--universe",
+        choices=["sample", "full-a-share"],
+        default="sample",
+        help="sample keeps the deployable curated set; full-a-share traverses every active A-share stock returned by baostock.",
+    )
+    parser.add_argument("--markets", type=parse_markets, default=parse_markets("us,hk,a-share"))
+    parser.add_argument("--start-date", default="2010-01-01")
+    parser.add_argument("--universe-date", default=None, help="trading date used to enumerate the full A-share universe")
+    parser.add_argument("--limit", type=int, default=None, help="optional cap for smoke-testing large universes")
+    args = parser.parse_args()
+
     RAW.mkdir(parents=True, exist_ok=True)
     READY.mkdir(parents=True, exist_ok=True)
     items = []
-    items.extend(download_yfinance())
-    items.extend(download_baostock())
+    items.extend(download_yfinance(args.start_date, args.markets))
+    items.extend(
+        download_baostock(
+            args.start_date,
+            args.universe == "full-a-share",
+            args.markets,
+            args.limit,
+            args.universe_date,
+        )
+    )
     update_manifest(items)
     print(f"Downloaded and normalized {len(items)} datasets.")
     print(f"Raw files: {RAW}")
