@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Livermore Tape Ledger</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Tape Ledger</p>
+          <h1>利弗莫尔手抄 K 线练习台</h1>
+        </div>
+        <div class="topbar-actions">
+          <button id="exportBtn" class="button ghost" type="button">导出</button>
+          <label class="button ghost file-button">
+            导入
+            <input id="importInput" type="file" accept=".json,application/json">
+          </label>
+          <button id="sampleBtn" class="button" type="button">示例行情</button>
+        </div>
+      </header>
+
+      <section class="workbench">
+        <aside class="entry-panel" aria-label="行情记录">
+          <div class="panel-heading">
+            <span class="panel-kicker">Ledger</span>
+            <h2>记录一根</h2>
+          </div>
+
+          <form id="candleForm" class="entry-form">
+            <label>
+              时间
+              <input id="timeInput" name="time" type="datetime-local" required>
+            </label>
+            <div class="field-grid">
+              <label>
+                开盘
+                <input id="openInput" name="open" type="number" step="0.01" min="0" required>
+              </label>
+              <label>
+                最高
+                <input id="highInput" name="high" type="number" step="0.01" min="0" required>
+              </label>
+              <label>
+                最低
+                <input id="lowInput" name="low" type="number" step="0.01" min="0" required>
+              </label>
+              <label>
+                收盘
+                <input id="closeInput" name="close" type="number" step="0.01" min="0" required>
+              </label>
+            </div>
+            <label>
+              成交量
+              <input id="volumeInput" name="volume" type="number" step="1" min="0" required>
+            </label>
+            <label>
+              备注
+              <textarea id="noteInput" name="note" rows="3" maxlength="180"></textarea>
+            </label>
+            <div class="form-actions">
+              <button id="saveBtn" class="button primary" type="submit">落笔绘制</button>
+              <button id="clearFormBtn" class="button ghost" type="button">清空</button>
+            </div>
+            <p id="formMessage" class="form-message" role="status"></p>
+          </form>
+
+          <div class="stats-grid" aria-label="当前统计">
+            <div>
+              <span>根数</span>
+              <strong id="countStat">0</strong>
+            </div>
+            <div>
+              <span>涨跌</span>
+              <strong id="changeStat">-</strong>
+            </div>
+            <div>
+              <span>区间量</span>
+              <strong id="volumeStat">-</strong>
+            </div>
+            <div>
+              <span>游标</span>
+              <strong id="cursorStat">-</strong>
+            </div>
+          </div>
+        </aside>
+
+        <section class="chart-panel" aria-label="手绘 K 线">
+          <div class="chart-toolbar">
+            <div>
+              <p class="panel-kicker">Canvas</p>
+              <h2 id="chartTitle">空白练习本</h2>
+            </div>
+            <div class="tool-row">
+              <button id="prevBtn" class="icon-button" type="button" title="上一根" aria-label="上一根">‹</button>
+              <button id="playBtn" class="button compact" type="button">播放</button>
+              <button id="nextBtn" class="icon-button" type="button" title="下一根" aria-label="下一根">›</button>
+              <button id="fitBtn" class="button compact ghost" type="button">全历史</button>
+            </div>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="chartCanvas" width="1180" height="640"></canvas>
+            <div id="emptyState" class="empty-state">
+              <strong>从左侧写下第一根行情</strong>
+              <span>时间、价格、成交量会一起进入练习本。</span>
+            </div>
+          </div>
+
+          <div class="timeline">
+            <input id="timelineRange" type="range" min="0" max="0" value="0">
+            <div class="time-jump">
+              <select id="jumpSelect" aria-label="跳到时间点"></select>
+              <button id="jumpBtn" class="button compact ghost" type="button">回到此刻</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="history-panel" aria-label="历史记录">
+          <div class="panel-heading">
+            <span class="panel-kicker">Review</span>
+            <h2>时间线</h2>
+          </div>
+          <div id="historyList" class="history-list"></div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
