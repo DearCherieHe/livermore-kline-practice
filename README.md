@@ -38,13 +38,18 @@ time,open,high,low,close,volume,note
 - US: AAPL, AMZN, GOOGL, IBM, MSFT, NVDA, TSLA
 - US ETF: SPY, QQQ
 
-这些样本来自本地下载数据的标准化输出，主要用于练习 K 线记录和时间线复盘，不代表无幸存者偏差的严肃回测数据。
+这些样本主要用于练习 K 线记录和时间线复盘，不代表无幸存者偏差的严肃回测数据。全量研究数据不放在这个部署仓库里。
 
-全量本地数据在：
+## 下载新样本数据
 
-```text
-/Users/serena/Documents/Notes/Trade/stockdata/website_ready
+需要联网环境：
+
+```bash
+python3 -m pip install -r requirements_data.txt
+python3 scripts/download_market_data.py
 ```
+
+脚本会把网站可用文件写到 `data/downloaded/`，并更新 `data/manifest.json`。
 
 ## Streamlit 部署
 
