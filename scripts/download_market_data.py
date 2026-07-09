@@ -78,6 +78,8 @@ def download_yfinance() -> list[dict]:
             if data.empty:
                 print(f"skip empty {ticker}")
                 continue
+            if hasattr(data.columns, "nlevels") and data.columns.nlevels > 1:
+                data = data.xs(ticker, axis=1, level="Ticker")
 
             raw_path = RAW / market.lower() / f"{csv_name(ticker)}.csv"
             raw_path.parent.mkdir(parents=True, exist_ok=True)

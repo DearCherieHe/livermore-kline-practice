@@ -9,8 +9,228 @@
     "volume",
     "note"
   ],
-  "count": 9,
+  "count": 24,
   "datasets": [
+    {
+      "symbol": "sh.600036",
+      "name": "China Merchants Bank",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600036.csv",
+      "rows": 3988,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.600519",
+      "name": "Kweichow Moutai",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_600519.csv",
+      "rows": 4003,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sh.601318",
+      "name": "Ping An Insurance",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sh_601318.csv",
+      "rows": 3955,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "sz.300750",
+      "name": "CATL",
+      "market": "A-share",
+      "source": "baostock",
+      "file": "downloaded/a_share/sz_300750.csv",
+      "rows": 1960,
+      "start": "2018-06-11",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "0700.HK",
+      "name": "0700.HK",
+      "market": "HK",
+      "source": "yfinance",
+      "file": "downloaded/hk/0700_HK.csv",
+      "rows": 4067,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "2800.HK",
+      "name": "2800.HK",
+      "market": "HK",
+      "source": "yfinance",
+      "file": "downloaded/hk/2800_HK.csv",
+      "rows": 4066,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "3690.HK",
+      "name": "3690.HK",
+      "market": "HK",
+      "source": "yfinance",
+      "file": "downloaded/hk/3690_HK.csv",
+      "rows": 1915,
+      "start": "2018-09-20",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "9988.HK",
+      "name": "9988.HK",
+      "market": "HK",
+      "source": "yfinance",
+      "file": "downloaded/hk/9988_HK.csv",
+      "rows": 1625,
+      "start": "2019-11-26",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "AAPL",
+      "name": "AAPL",
+      "market": "US",
+      "source": "local archive7 sample",
+      "file": "us/AAPL.csv",
+      "rows": 8364,
+      "start": "1984-09-07",
+      "end": "2017-11-10"
+    },
+    {
+      "symbol": "AAPL",
+      "name": "AAPL",
+      "market": "US",
+      "source": "yfinance",
+      "file": "downloaded/us/AAPL.csv",
+      "rows": 4153,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "AMZN",
+      "name": "AMZN",
+      "market": "US",
+      "source": "local archive7 sample",
+      "file": "us/AMZN.csv",
+      "rows": 5153,
+      "start": "1997-05-16",
+      "end": "2017-11-10"
+    },
+    {
+      "symbol": "AMZN",
+      "name": "AMZN",
+      "market": "US",
+      "source": "yfinance",
+      "file": "downloaded/us/AMZN.csv",
+      "rows": 4153,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "GOOGL",
+      "market": "US",
+      "source": "local archive7 sample",
+      "file": "us/GOOGL.csv",
+      "rows": 3333,
+      "start": "2004-08-19",
+      "end": "2017-11-10"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "GOOGL",
+      "market": "US",
+      "source": "yfinance",
+      "file": "downloaded/us/GOOGL.csv",
+      "rows": 4153,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "IBM",
+      "name": "IBM",
+      "market": "US",
+      "source": "local archive7 sample",
+      "file": "us/IBM.csv",
+      "rows": 14059,
+      "start": "1962-01-02",
+      "end": "2017-11-10"
+    },
+    {
+      "symbol": "META",
+      "name": "META",
+      "market": "US",
+      "source": "yfinance",
+      "file": "downloaded/us/META.csv",
+      "rows": 3554,
+      "start": "2012-05-18",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "MSFT",
+      "market": "US",
+      "source": "local archive7 sample",
+      "file": "us/MSFT.csv",
+      "rows": 7983,
+      "start": "1986-03-13",
+      "end": "2017-11-10"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "MSFT",
+      "market": "US",
+      "source": "yfinance",
+      "file": "downloaded/us/MSFT.csv",
+      "rows": 4153,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVDA",
+      "market": "US",
+      "source": "local archive7 sample",
+      "file": "us/NVDA.csv",
+      "rows": 4733,
+      "start": "1999-01-22",
+      "end": "2017-11-10"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVDA",
+      "market": "US",
+      "source": "yfinance",
+      "file": "downloaded/us/NVDA.csv",
+      "rows": 4153,
+      "start": "2010-01-04",
+      "end": "2026-07-09"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "TSLA",
+      "market": "US",
+      "source": "local archive7 sample",
+      "file": "us/TSLA.csv",
+      "rows": 1858,
+      "start": "2010-06-28",
+      "end": "2017-11-10"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "TSLA",
+      "market": "US",
+      "source": "yfinance",
+      "file": "downloaded/us/TSLA.csv",
+      "rows": 4031,
+      "start": "2010-06-29",
+      "end": "2026-07-09"
+    },
     {
       "symbol": "QQQ",
       "name": "QQQ",
@@ -29,76 +249,6 @@
       "file": "etf/SPY.csv",
       "rows": 3201,
       "start": "2005-02-25",
-      "end": "2017-11-10"
-    },
-    {
-      "symbol": "AAPL",
-      "name": "AAPL",
-      "market": "US",
-      "source": "local archive7 sample",
-      "file": "us/AAPL.csv",
-      "rows": 8364,
-      "start": "1984-09-07",
-      "end": "2017-11-10"
-    },
-    {
-      "symbol": "AMZN",
-      "name": "AMZN",
-      "market": "US",
-      "source": "local archive7 sample",
-      "file": "us/AMZN.csv",
-      "rows": 5153,
-      "start": "1997-05-16",
-      "end": "2017-11-10"
-    },
-    {
-      "symbol": "GOOGL",
-      "name": "GOOGL",
-      "market": "US",
-      "source": "local archive7 sample",
-      "file": "us/GOOGL.csv",
-      "rows": 3333,
-      "start": "2004-08-19",
-      "end": "2017-11-10"
-    },
-    {
-      "symbol": "IBM",
-      "name": "IBM",
-      "market": "US",
-      "source": "local archive7 sample",
-      "file": "us/IBM.csv",
-      "rows": 14059,
-      "start": "1962-01-02",
-      "end": "2017-11-10"
-    },
-    {
-      "symbol": "MSFT",
-      "name": "MSFT",
-      "market": "US",
-      "source": "local archive7 sample",
-      "file": "us/MSFT.csv",
-      "rows": 7983,
-      "start": "1986-03-13",
-      "end": "2017-11-10"
-    },
-    {
-      "symbol": "NVDA",
-      "name": "NVDA",
-      "market": "US",
-      "source": "local archive7 sample",
-      "file": "us/NVDA.csv",
-      "rows": 4733,
-      "start": "1999-01-22",
-      "end": "2017-11-10"
-    },
-    {
-      "symbol": "TSLA",
-      "name": "TSLA",
-      "market": "US",
-      "source": "local archive7 sample",
-      "file": "us/TSLA.csv",
-      "rows": 1858,
-      "start": "2010-06-28",
       "end": "2017-11-10"
     }
   ]
