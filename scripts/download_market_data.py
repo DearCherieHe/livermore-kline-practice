@@ -15,13 +15,168 @@ RAW = ROOT / "downloaded_raw"
 DATA = ROOT / "data"
 READY = DATA / "downloaded"
 
-US_TICKERS = ["AAPL", "MSFT", "NVDA", "AMZN", "TSLA", "META", "GOOGL"]
+US_TICKERS = [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "AMZN",
+    "META",
+    "GOOGL",
+    "GOOG",
+    "TSLA",
+    "AVGO",
+    "ORCL",
+    "AMD",
+    "INTC",
+    "QCOM",
+    "MU",
+    "TXN",
+    "ADI",
+    "AMAT",
+    "LRCX",
+    "KLAC",
+    "CRM",
+    "NOW",
+    "ADBE",
+    "INTU",
+    "SHOP",
+    "SNOW",
+    "PLTR",
+    "PANW",
+    "CRWD",
+    "DDOG",
+    "NET",
+    "MDB",
+    "UBER",
+    "ABNB",
+    "COIN",
+    "PYPL",
+    "XYZ",
+    "NFLX",
+    "DIS",
+    "IBM",
+    "CSCO",
+    "ACN",
+    "ANET",
+    "ARM",
+    "ASML",
+    "TSM",
+    "MRVL",
+    "MCHP",
+    "NXPI",
+    "ON",
+    "MPWR",
+    "TEAM",
+    "WDAY",
+    "ZS",
+    "OKTA",
+    "HUBS",
+    "ROKU",
+    "APP",
+    "RBLX",
+    "TTD",
+    "BIDU",
+    "BABA",
+    "JD",
+    "PDD",
+    "LI",
+    "NIO",
+    "XPEV",
+]
 HK_TICKERS = ["0700.HK", "9988.HK", "3690.HK", "2800.HK"]
 A_SHARE_CODES = [
-    ("sh.600519", "Kweichow Moutai"),
-    ("sz.300750", "CATL"),
-    ("sh.600036", "China Merchants Bank"),
-    ("sh.601318", "Ping An Insurance"),
+    ("sh.600519", "贵州茅台"),
+    ("sz.300750", "宁德时代"),
+    ("sh.600036", "招商银行"),
+    ("sh.601318", "中国平安"),
+]
+A_SHARE_FOCUS_CODES = [
+    "sh.600089",
+    "sh.600438",
+    "sh.600460",
+    "sh.600570",
+    "sh.600584",
+    "sh.600588",
+    "sh.600703",
+    "sh.600745",
+    "sh.601012",
+    "sh.601138",
+    "sh.601360",
+    "sh.603019",
+    "sh.603259",
+    "sh.603501",
+    "sh.603986",
+    "sh.605358",
+    "sh.688008",
+    "sh.688009",
+    "sh.688012",
+    "sh.688036",
+    "sh.688041",
+    "sh.688111",
+    "sh.688126",
+    "sh.688169",
+    "sh.688187",
+    "sh.688223",
+    "sh.688256",
+    "sh.688271",
+    "sh.688303",
+    "sh.688396",
+    "sh.688475",
+    "sh.688599",
+    "sh.688981",
+    "sz.000063",
+    "sz.000100",
+    "sz.000725",
+    "sz.000938",
+    "sz.002049",
+    "sz.002129",
+    "sz.002179",
+    "sz.002230",
+    "sz.002236",
+    "sz.002241",
+    "sz.002371",
+    "sz.002415",
+    "sz.002459",
+    "sz.002460",
+    "sz.002475",
+    "sz.002594",
+    "sz.002812",
+    "sz.002938",
+    "sz.300001",
+    "sz.300003",
+    "sz.300014",
+    "sz.300015",
+    "sz.300033",
+    "sz.300059",
+    "sz.300122",
+    "sz.300124",
+    "sz.300274",
+    "sz.300308",
+    "sz.300316",
+    "sz.300347",
+    "sz.300394",
+    "sz.300408",
+    "sz.300413",
+    "sz.300433",
+    "sz.300442",
+    "sz.300450",
+    "sz.300454",
+    "sz.300496",
+    "sz.300502",
+    "sz.300628",
+    "sz.300661",
+    "sz.300750",
+    "sz.300751",
+    "sz.300759",
+    "sz.300760",
+    "sz.300763",
+    "sz.300769",
+    "sz.300782",
+    "sz.300896",
+    "sz.300999",
+    "sz.301236",
+    "sz.301269",
+    "sz.301308",
 ]
 A_SHARE_STOCK_PREFIXES = ("sh.60", "sh.68", "sz.00", "sz.30", "bj.")
 
@@ -136,9 +291,27 @@ def latest_trade_date(bs) -> str:
     return dates[-1]
 
 
-def get_a_share_codes(bs, full_universe: bool, universe_date: str | None) -> list[tuple[str, str]]:
-    if not full_universe:
+def get_a_share_name_map(bs, universe_date: str | None) -> dict[str, str]:
+    universe_date = universe_date or latest_trade_date(bs)
+    rs = bs.query_all_stock(day=universe_date)
+    if rs.error_code != "0":
+        raise RuntimeError(f"baostock query_all_stock failed: {rs.error_msg}")
+
+    names = {}
+    while rs.next():
+        row = dict(zip(rs.fields, rs.get_row_data()))
+        code = row.get("code", "")
+        if row.get("tradeStatus") == "1" and code:
+            names[code] = row.get("code_name", code)
+    return names
+
+
+def get_a_share_codes(bs, universe: str, universe_date: str | None) -> list[tuple[str, str]]:
+    if universe == "sample":
         return A_SHARE_CODES
+    if universe == "focus":
+        names = get_a_share_name_map(bs, universe_date)
+        return [(code, names.get(code, code)) for code in A_SHARE_FOCUS_CODES]
 
     universe_date = universe_date or latest_trade_date(bs)
     print(f"Using A-share universe date: {universe_date}")
@@ -159,7 +332,7 @@ def get_a_share_codes(bs, full_universe: bool, universe_date: str | None) -> lis
 
 def download_baostock(
     start_date: str,
-    full_universe: bool,
+    universe: str,
     markets: set[str],
     limit: int | None,
     universe_date: str | None,
@@ -176,7 +349,7 @@ def download_baostock(
         raise RuntimeError(f"baostock login failed: {login.error_msg}")
 
     try:
-        codes = get_a_share_codes(bs, full_universe, universe_date)
+        codes = get_a_share_codes(bs, universe, universe_date)
         if limit is not None:
             codes = codes[:limit]
         for index, (code, name) in enumerate(codes, start=1):
@@ -249,9 +422,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Download and normalize OHLCV datasets.")
     parser.add_argument(
         "--universe",
-        choices=["sample", "full-a-share"],
+        choices=["sample", "focus", "full-a-share"],
         default="sample",
-        help="sample keeps the deployable curated set; full-a-share traverses every active A-share stock returned by baostock.",
+        help="sample keeps a tiny set; focus adds major China tech/ChiNext/STAR stocks; full-a-share traverses every active A-share stock returned by baostock.",
     )
     parser.add_argument("--markets", type=parse_markets, default=parse_markets("us,hk,a-share"))
     parser.add_argument("--start-date", default="2010-01-01")
@@ -266,7 +439,7 @@ def main() -> None:
     items.extend(
         download_baostock(
             args.start_date,
-            args.universe == "full-a-share",
+            args.universe,
             args.markets,
             args.limit,
             args.universe_date,
