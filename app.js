@@ -15,6 +15,8 @@ const els = {
   sample: document.getElementById("sampleBtn"),
   export: document.getElementById("exportBtn"),
   import: document.getElementById("importInput"),
+  bundled: document.getElementById("bundledSelect"),
+  loadBundled: document.getElementById("loadBundledBtn"),
   canvas: document.getElementById("chartCanvas"),
   empty: document.getElementById("emptyState"),
   title: document.getElementById("chartTitle"),
@@ -33,6 +35,7 @@ const els = {
 };
 
 const ctx = els.canvas.getContext("2d");
+const bundledDatasets = Array.isArray(window.BUNDLED_DATASETS) ? window.BUNDLED_DATASETS : [];
 const state = {
   candles: [],
   cursor: -1,
@@ -74,10 +77,23 @@ function fmtTime(value) {
   }).format(date);
 }
 
+function normalizeTime(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const cleaned = raw.replace(/\//g, "-").replace(" ", "T");
+  if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) return `${cleaned}T00:00`;
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(cleaned)) return cleaned.slice(0, 16);
+
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return raw;
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date.toISOString().slice(0, 16);
+}
+
 function normalizeCandle(raw) {
   return {
     id: raw.id || uid(),
-    time: raw.time,
+    time: normalizeTime(raw.time || raw.date || raw.timestamp || raw.datetime),
     open: Number(raw.open),
     high: Number(raw.high),
     low: Number(raw.low),
@@ -105,6 +121,109 @@ function validate(candle) {
   return "";
 }
 
+function canonicalKey(key) {
+  const normalized = String(key || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+  const aliases = {
+    t: "time",
+    time: "time",
+    date: "time",
+    datetime: "time",
+    timestamp: "time",
+    tradingtime: "time",
+    o: "open",
+    open: "open",
+    h: "high",
+    high: "high",
+    l: "low",
+    low: "low",
+    c: "close",
+    close: "close",
+    v: "volume",
+    vol: "volume",
+    volume: "volume",
+    amount: "volume",
+    note: "note",
+    notes: "note",
+    comment: "note",
+    memo: "note",
+  };
+  return aliases[normalized] || normalized;
+}
+
+function normalizeImportRow(row) {
+  const mapped = {};
+  Object.entries(row || {}).forEach(([key, value]) => {
+    mapped[canonicalKey(key)] = value;
+  });
+  return normalizeCandle(mapped);
+}
+
+function parseCsvLine(line) {
+  const cells = [];
+  let current = "";
+  let quoted = false;
+
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    const next = line[i + 1];
+    if (char === "\"" && quoted && next === "\"") {
+      current += "\"";
+      i += 1;
+    } else if (char === "\"") {
+      quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      cells.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  cells.push(current.trim());
+  return cells;
+}
+
+function parseCsv(text) {
+  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  if (lines.length < 2) throw new Error("CSV 至少需要表头和一行数据。");
+
+  const headers = parseCsvLine(lines[0]).map(canonicalKey);
+  return lines.slice(1).map((line) => {
+    const values = parseCsvLine(line);
+    return headers.reduce((row, header, index) => {
+      row[header] = values[index] || "";
+      return row;
+    }, {});
+  });
+}
+
+function parseImportFile(file, text) {
+  const trimmed = text.trim();
+  if (!trimmed) throw new Error("文件是空的。");
+
+  if (file.name.toLowerCase().endsWith(".json") || trimmed.startsWith("{") || trimmed.startsWith("[")) {
+    const parsed = JSON.parse(trimmed);
+    const rows = Array.isArray(parsed) ? parsed : (parsed.candles || parsed.data || parsed.records);
+    if (!Array.isArray(rows)) throw new Error("JSON 需要是数组，或包含 candles/data/records 数组。");
+    return rows.map(normalizeImportRow);
+  }
+
+  return parseCsv(trimmed).map(normalizeImportRow);
+}
+
+function validateImportedCandles(candles) {
+  if (!candles.length) throw new Error("没有可导入的数据。");
+  candles.forEach((candle, index) => {
+    const error = validate(candle);
+    if (error) throw new Error(`第 ${index + 1} 行：${error}`);
+  });
+
+  const seen = new Set();
+  candles.forEach((candle, index) => {
+    if (seen.has(candle.time)) throw new Error(`第 ${index + 1} 行：时间重复。`);
+    seen.add(candle.time);
+  });
+}
+
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ candles: state.candles }));
 }
@@ -118,6 +237,26 @@ function load() {
     state.candles = [];
     state.cursor = -1;
   }
+}
+
+function initBundledDatasets() {
+  els.bundled.innerHTML = "";
+  if (!bundledDatasets.length) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "无内置数据";
+    els.bundled.appendChild(option);
+    els.bundled.disabled = true;
+    els.loadBundled.disabled = true;
+    return;
+  }
+
+  bundledDatasets.forEach((dataset, index) => {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = `${dataset.symbol} · ${dataset.market} · ${dataset.rows.length} 根`;
+    els.bundled.appendChild(option);
+  });
 }
 
 function readForm() {
@@ -513,15 +652,14 @@ els.import.addEventListener("change", async (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
   try {
-    const parsed = JSON.parse(await file.text());
-    const candles = (parsed.candles || []).map(normalizeCandle);
-    const invalid = candles.find(validate);
-    if (invalid) throw new Error(validate(invalid));
+    const candles = parseImportFile(file, await file.text());
+    validateImportedCandles(candles);
     state.candles = sortedCandles(candles);
     state.cursor = state.candles.length - 1;
     save();
     fillForm(state.candles[state.cursor] || null);
     render();
+    els.message.textContent = `已导入 ${state.candles.length} 根行情。`;
   } catch (error) {
     els.message.textContent = `导入失败：${error.message}`;
   } finally {
@@ -529,8 +667,23 @@ els.import.addEventListener("change", async (event) => {
   }
 });
 
+els.loadBundled.addEventListener("click", () => {
+  const dataset = bundledDatasets[Number(els.bundled.value)];
+  if (!dataset) return;
+  const candles = dataset.rows.map(normalizeImportRow);
+  validateImportedCandles(candles);
+  stopPlayback();
+  state.candles = sortedCandles(candles);
+  state.cursor = state.candles.length - 1;
+  save();
+  fillForm(state.candles[state.cursor] || null);
+  render();
+  els.message.textContent = `已载入 ${dataset.symbol}：${state.candles.length} 根行情。`;
+});
+
 window.addEventListener("resize", resizeCanvas);
 
 load();
+initBundledDatasets();
 fillForm(state.candles[state.cursor] || null);
 requestAnimationFrame(resizeCanvas);

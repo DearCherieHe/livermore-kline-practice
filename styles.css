@@ -83,6 +83,12 @@ h2 {
   gap: 8px;
 }
 
+.dataset-select {
+  width: min(280px, 34vw);
+  border-color: var(--ink);
+  font-weight: 750;
+}
+
 .button,
 .icon-button {
   border: 1px solid var(--ink);

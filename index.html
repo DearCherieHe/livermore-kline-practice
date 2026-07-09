@@ -14,10 +14,12 @@
           <h1>利弗莫尔手抄 K 线练习台</h1>
         </div>
         <div class="topbar-actions">
+          <select id="bundledSelect" class="dataset-select" aria-label="选择内置数据"></select>
+          <button id="loadBundledBtn" class="button ghost" type="button">载入内置</button>
           <button id="exportBtn" class="button ghost" type="button">导出</button>
           <label class="button ghost file-button">
-            导入
-            <input id="importInput" type="file" accept=".json,application/json">
+            导入数据
+            <input id="importInput" type="file" accept=".json,.csv,application/json,text/csv">
           </label>
           <button id="sampleBtn" class="button" type="button">示例行情</button>
         </div>
