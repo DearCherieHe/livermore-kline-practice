@@ -400,8 +400,8 @@ function drawCandles(candles) {
     ctx.globalAlpha = 1;
 
     if (index === state.cursor) {
-      ctx.strokeStyle = "#2f5d73";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(47, 93, 115, 0.28)";
+      ctx.lineWidth = 1;
       ctx.strokeRect(x - step / 2 + 2, chartTop + 2, step - 4, chartHeight + volumeHeight + 22);
     }
   });
