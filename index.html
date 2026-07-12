@@ -113,7 +113,16 @@
           </div>
 
           <div class="timeline">
-            <input id="timelineRange" type="range" min="0" max="0" value="0">
+            <div class="range-stack" aria-label="选择可视区间">
+              <label>
+                起点
+                <input id="windowStartRange" type="range" min="0" max="0" value="0">
+              </label>
+              <label>
+                终点
+                <input id="timelineRange" type="range" min="0" max="0" value="0">
+              </label>
+            </div>
             <div class="time-jump">
               <select id="jumpSelect" aria-label="跳到时间点"></select>
               <button id="jumpBtn" class="button compact ghost" type="button">回到此刻</button>
