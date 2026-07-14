@@ -51,6 +51,20 @@ python3 scripts/download_market_data.py
 
 脚本会把网站可用文件写到 `data/downloaded/`，并更新 `data/manifest.json`。
 
+默认命令下载适合部署的小样本。要补充中国主要科技股、科创板和创业板样本，可以运行：
+
+```bash
+python3 scripts/download_market_data.py --universe focus --markets a-share --universe-date 2026-07-09
+```
+
+要遍历 baostock 返回的全量 A 股股票列表，可以运行：
+
+```bash
+python3 scripts/download_market_data.py --universe full-a-share --markets a-share --universe-date 2026-07-09
+```
+
+全量 A 股有数千只，baostock 历史接口是逐只查询，耗时会很长。可以先用 `--limit 100` 小批量验证。
+
 ## Streamlit 部署
 
 这个目录也可以作为 Streamlit app 部署。

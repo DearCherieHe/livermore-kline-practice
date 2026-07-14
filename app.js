@@ -24,6 +24,7 @@ const els = {
   play: document.getElementById("playBtn"),
   next: document.getElementById("nextBtn"),
   fit: document.getElementById("fitBtn"),
+  windowStart: document.getElementById("windowStartRange"),
   range: document.getElementById("timelineRange"),
   jump: document.getElementById("jumpSelect"),
   jumpBtn: document.getElementById("jumpBtn"),
@@ -38,10 +39,12 @@ const ctx = els.canvas.getContext("2d");
 const bundledDatasets = Array.isArray(window.BUNDLED_DATASETS) ? window.BUNDLED_DATASETS : [];
 const state = {
   candles: [],
+  windowStart: 0,
   cursor: -1,
   selectedId: null,
   playing: false,
   timer: null,
+  drag: null,
 };
 
 function nowLocalInput() {
@@ -228,13 +231,55 @@ function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ candles: state.candles }));
 }
 
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function defaultWindowStart() {
+  if (!state.candles.length) return 0;
+  return Math.max(0, state.candles.length - 120);
+}
+
+function normalizeWindow() {
+  if (!state.candles.length) {
+    state.windowStart = 0;
+    state.cursor = -1;
+    return;
+  }
+  state.cursor = clamp(state.cursor, 0, state.candles.length - 1);
+  state.windowStart = clamp(state.windowStart, 0, state.cursor);
+}
+
+function setFullWindow() {
+  state.windowStart = 0;
+  state.cursor = state.candles.length - 1;
+  normalizeWindow();
+}
+
+function setTailWindow() {
+  state.cursor = state.candles.length - 1;
+  state.windowStart = defaultWindowStart();
+  normalizeWindow();
+}
+
+function panWindow(delta) {
+  if (!state.candles.length || !delta) return;
+  const width = state.cursor - state.windowStart;
+  const maxStart = Math.max(0, state.candles.length - width - 1);
+  state.windowStart = clamp(state.windowStart + delta, 0, maxStart);
+  state.cursor = state.windowStart + width;
+  fillForm(state.candles[state.cursor]);
+  render();
+}
+
 function load() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
     state.candles = sortedCandles((parsed.candles || []).map(normalizeCandle));
-    state.cursor = state.candles.length - 1;
+    setTailWindow();
   } catch {
     state.candles = [];
+    state.windowStart = 0;
     state.cursor = -1;
   }
 }
@@ -294,7 +339,7 @@ function fillForm(candle) {
 
 function visibleCandles() {
   if (state.cursor < 0) return [];
-  return state.candles.slice(0, state.cursor + 1);
+  return state.candles.slice(state.windowStart, state.cursor + 1);
 }
 
 function resizeCanvas() {
@@ -374,6 +419,7 @@ function drawCandles(candles) {
   const maxVolume = Math.max(...candles.map((c) => c.volume), 1);
 
   candles.forEach((candle, index) => {
+    const globalIndex = state.windowStart + index;
     const x = leftPad + step * index + step / 2;
     const up = candle.close >= candle.open;
     const color = up ? "#177b57" : "#b13f36";
@@ -399,9 +445,9 @@ function drawCandles(candles) {
     ctx.fillRect(x - candleWidth / 2, volumeTop + volumeHeight - volHeight, candleWidth, volHeight);
     ctx.globalAlpha = 1;
 
-    if (index === state.cursor) {
-      ctx.strokeStyle = "#2f5d73";
-      ctx.lineWidth = 2;
+    if (globalIndex === state.cursor) {
+      ctx.strokeStyle = "rgba(47, 93, 115, 0.28)";
+      ctx.lineWidth = 1;
       ctx.strokeRect(x - step / 2 + 2, chartTop + 2, step - 4, chartHeight + volumeHeight + 22);
     }
   });
@@ -421,6 +467,13 @@ function drawEmpty() {
   ctx.fillRect(0, 0, rect.width, rect.height);
 }
 
+function candleStepPx() {
+  const rect = els.canvas.getBoundingClientRect();
+  const visibleCount = Math.max(visibleCandles().length, 1);
+  const plotWidth = Math.max(1, rect.width - 32 - 70);
+  return plotWidth / visibleCount;
+}
+
 function draw() {
   const candles = visibleCandles();
   els.empty.classList.toggle("hidden", candles.length > 0);
@@ -433,6 +486,9 @@ function draw() {
 
 function renderTimeline() {
   const max = Math.max(state.candles.length - 1, 0);
+  els.windowStart.max = String(max);
+  els.windowStart.value = String(Math.max(state.windowStart, 0));
+  els.windowStart.disabled = state.candles.length === 0;
   els.range.max = String(max);
   els.range.value = String(Math.max(state.cursor, 0));
   els.range.disabled = state.candles.length === 0;
@@ -504,14 +560,13 @@ function renderStats() {
   els.changeStat.textContent = `${change >= 0 ? "+" : ""}${fmtNumber(change)} (${pct >= 0 ? "+" : ""}${fmtNumber(pct)}%)`;
   els.changeStat.style.color = change >= 0 ? "var(--green)" : "var(--red)";
   els.volumeStat.textContent = fmtVolume(totalVolume);
-  els.cursorStat.textContent = `${Math.max(state.cursor + 1, 0)}/${state.candles.length}`;
+  els.cursorStat.textContent = `${state.windowStart + 1}-${state.cursor + 1}/${state.candles.length}`;
   els.title.textContent = `${fmtTime(last.time)} · C ${fmtNumber(last.close)}`;
 }
 
 function render() {
   state.candles = sortedCandles(state.candles);
-  if (state.candles.length === 0) state.cursor = -1;
-  if (state.cursor >= state.candles.length) state.cursor = state.candles.length - 1;
+  normalizeWindow();
   renderTimeline();
   renderHistory();
   renderStats();
@@ -538,6 +593,7 @@ function upsertCandle(candle) {
   }
   state.candles = sortedCandles(state.candles);
   state.cursor = state.candles.findIndex((item) => item.id === candle.id);
+  if (state.cursor < state.windowStart) state.windowStart = state.cursor;
   save();
   fillForm(candle);
   els.message.textContent = "";
@@ -547,6 +603,7 @@ function upsertCandle(candle) {
 function step(delta) {
   if (!state.candles.length) return;
   state.cursor = Math.max(0, Math.min(state.candles.length - 1, state.cursor + delta));
+  if (state.cursor < state.windowStart) state.windowStart = state.cursor;
   fillForm(state.candles[state.cursor]);
   render();
 }
@@ -613,7 +670,7 @@ els.clearForm.addEventListener("click", () => fillForm(null));
 els.prev.addEventListener("click", () => step(-1));
 els.next.addEventListener("click", () => step(1));
 els.fit.addEventListener("click", () => {
-  state.cursor = state.candles.length - 1;
+  setFullWindow();
   fillForm(state.candles[state.cursor] || null);
   render();
 });
@@ -621,21 +678,30 @@ els.play.addEventListener("click", () => {
   if (state.playing) stopPlayback();
   else startPlayback();
 });
+els.windowStart.addEventListener("input", () => {
+  stopPlayback();
+  state.windowStart = Number(els.windowStart.value);
+  if (state.windowStart > state.cursor) state.cursor = state.windowStart;
+  fillForm(state.candles[state.cursor]);
+  render();
+});
 els.range.addEventListener("input", () => {
   stopPlayback();
   state.cursor = Number(els.range.value);
+  if (state.cursor < state.windowStart) state.windowStart = state.cursor;
   fillForm(state.candles[state.cursor]);
   render();
 });
 els.jumpBtn.addEventListener("click", () => {
   state.cursor = Number(els.jump.value);
+  if (state.cursor < state.windowStart) state.windowStart = state.cursor;
   fillForm(state.candles[state.cursor]);
   render();
 });
 els.sample.addEventListener("click", () => {
   stopPlayback();
   state.candles = sampleCandles();
-  state.cursor = state.candles.length - 1;
+  setTailWindow();
   save();
   fillForm(state.candles[state.cursor]);
   render();
@@ -655,7 +721,7 @@ els.import.addEventListener("change", async (event) => {
     const candles = parseImportFile(file, await file.text());
     validateImportedCandles(candles);
     state.candles = sortedCandles(candles);
-    state.cursor = state.candles.length - 1;
+    setTailWindow();
     save();
     fillForm(state.candles[state.cursor] || null);
     render();
@@ -674,12 +740,59 @@ els.loadBundled.addEventListener("click", () => {
   validateImportedCandles(candles);
   stopPlayback();
   state.candles = sortedCandles(candles);
-  state.cursor = state.candles.length - 1;
+  setTailWindow();
   save();
   fillForm(state.candles[state.cursor] || null);
   render();
   els.message.textContent = `已载入 ${dataset.symbol}：${state.candles.length} 根行情。`;
 });
+
+els.canvas.addEventListener("pointerdown", (event) => {
+  if (!state.candles.length) return;
+  stopPlayback();
+  state.drag = {
+    pointerId: event.pointerId,
+    startX: event.clientX,
+    startWindowStart: state.windowStart,
+    startCursor: state.cursor,
+    stepPx: candleStepPx(),
+  };
+  els.canvas.classList.add("dragging");
+  els.canvas.setPointerCapture(event.pointerId);
+});
+
+els.canvas.addEventListener("pointermove", (event) => {
+  if (!state.drag || state.drag.pointerId !== event.pointerId) return;
+  event.preventDefault();
+  const delta = Math.round((state.drag.startX - event.clientX) / Math.max(state.drag.stepPx, 1));
+  const width = state.drag.startCursor - state.drag.startWindowStart;
+  const maxStart = Math.max(0, state.candles.length - width - 1);
+  const nextStart = clamp(state.drag.startWindowStart + delta, 0, maxStart);
+  state.windowStart = nextStart;
+  state.cursor = nextStart + width;
+  fillForm(state.candles[state.cursor]);
+  render();
+});
+
+function endCanvasDrag(event) {
+  if (!state.drag || state.drag.pointerId !== event.pointerId) return;
+  state.drag = null;
+  els.canvas.classList.remove("dragging");
+  if (els.canvas.hasPointerCapture(event.pointerId)) {
+    els.canvas.releasePointerCapture(event.pointerId);
+  }
+}
+
+els.canvas.addEventListener("pointerup", endCanvasDrag);
+els.canvas.addEventListener("pointercancel", endCanvasDrag);
+
+els.canvas.addEventListener("wheel", (event) => {
+  if (!state.candles.length) return;
+  const intent = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+  if (!intent) return;
+  event.preventDefault();
+  panWindow(Math.sign(intent));
+}, { passive: false });
 
 window.addEventListener("resize", resizeCanvas);
 
